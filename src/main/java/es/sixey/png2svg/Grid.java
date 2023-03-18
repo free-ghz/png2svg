@@ -6,28 +6,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Grid {
-    private final int distance;
-    private final int tilt;
-    private final int width;
-    private final int height;
 
-    private Set<Point> points = new HashSet<>();
+    private final Set<Point> points = new HashSet<>();
 
     public Grid(int distance, int tilt, int width, int height) {
-        tilt = 0;
-
-        this.distance = distance;
-        this.tilt = tilt;
-        this.width = width;
-        this.height = height;
-
         var normalWidth = width/distance;
         var normalHeight = height/distance;
         for (int y = -normalHeight; y < (normalHeight * 2); y++) {
             for (int x = -normalWidth; x < (normalWidth * 2); x++) {
-                var realX = x * distance;
+                var realXZ = (x * distance);
+                var realYZ = (y * distance);
+                var realX = (realXZ * Math.cos(tilt)) + (realYZ * Math.sin(tilt));
+                var realY = -(realXZ * Math.sin(tilt)) + (realYZ * Math.cos(tilt));
                 if (realX < 0 || realX > width) continue;
-                var realY = y * distance;
                 if (realY < 0 || realY > height) continue;
 
                 points.add(new Point(realX, realY));

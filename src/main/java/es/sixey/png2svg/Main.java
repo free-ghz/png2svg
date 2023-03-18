@@ -26,7 +26,7 @@ public class Main {
         ));
 
         Drawing drawing = new Drawing();
-        int i = 0;
+        int i = 10;
         for (var color : palette.getColors()) {
             Grid grid = new Grid(20, i, image.getWidth(), image.getHeight());
             drawing.drawGrid(grid, image, palette, color, 20);
