@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 public class Main {
@@ -15,15 +17,19 @@ public class Main {
         BufferedImage inputImage = ImageIO.read(input);
 
         Image image = new Image(inputImage);
-        image.applyPalette(new Palette(Set.of(
-                new Color(255, 0, 0),
-                new Color(0, 0, 0),
-                new Color(255, 255, 255),
-                new Color(255, 255, 0)
-        )));
 
-        var outputImage = image.toBufferedImage();
-        var output = new File("output.png");
-        ImageIO.write(outputImage, "png", output);
+        Drawing drawing = new Drawing();
+        Grid grid = new Grid(20, 0, image.getWidth(), image.getHeight());
+        drawing.drawGrid(grid, image, new Color(62, 53, 109), 30);
+
+        grid = new Grid(20, 0, image.getWidth(), image.getHeight());
+        drawing.drawGrid(grid, image, new Color(201, 220, 170), 30);
+
+        grid = new Grid(20, 0, image.getWidth(), image.getHeight());
+        drawing.drawGrid(grid, image, new Color(188, 157, 110), 30);
+
+        var outputPath = Path.of("output.svg");
+        Files.writeString(outputPath, drawing.getSvg());
+
     }
 }

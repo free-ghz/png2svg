@@ -4,6 +4,7 @@ public class Color {
     private final int r;
     private final int g;
     private final int b;
+    private final int lumen;
     private final float h;
     private final float s;
     private final float v;
@@ -17,6 +18,8 @@ public class Color {
         this.g = g;
         this.b = b;
 
+        lumen = (int)((0.299*(float)r) + (0.587*(float)g) + (0.114*(float)b));
+
         var hsbvals = java.awt.Color.RGBtoHSB(r, g, b, null);
         h = hsbvals[0];
         s = hsbvals[1];
@@ -27,10 +30,23 @@ public class Color {
         return (r << 16) + (g << 8) + b;
     }
 
-    public int distanceTo(Color other) {
-        var hDist = Math.abs(Math.sin(h * Math.PI * 2) - Math.sin(other.h * Math.PI * 2))/2;
+    public java.awt.Color toJavaColor() {
+        return new java.awt.Color(r, g, b);
+    }
+
+    public float distanceTo(Color other) {
+        float hDist = (float)Math.abs(Math.sin(h * Math.PI * 2) - Math.sin(other.h * Math.PI * 2))/2;
         var sDist = Math.abs(s - other.s);
         var vDist = Math.abs(v - other.v);
-        return (int)((hDist + sDist + vDist)*255);
+        // return (hDist + sDist + vDist)/3.0f;
+        return ((float)Math.abs(lumen - other.lumen))/255.0f;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Color other) {
+            return other.r == r && other.b == b && other.g == g;
+        }
+        return false;
     }
 }

@@ -39,4 +39,18 @@ public class Image {
         }
         return image;
     }
+
+    public Color getColor(int x, int y) {
+        var clampX = Math.max(Math.min(x, width-1), 0);
+        var clampY = Math.max(Math.min(y, height-1), 0);
+        return colors[clampX][clampY];
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }
