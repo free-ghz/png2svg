@@ -14,6 +14,8 @@ public class Grid {
     private Set<Point> points = new HashSet<>();
 
     public Grid(int distance, int tilt, int width, int height) {
+        tilt = 0;
+
         this.distance = distance;
         this.tilt = tilt;
         this.width = width;

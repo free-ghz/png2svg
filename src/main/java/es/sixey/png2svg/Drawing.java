@@ -1,6 +1,7 @@
 package es.sixey.png2svg;
 
 import es.sixey.png2svg.color.Color;
+import es.sixey.png2svg.color.Palette;
 import org.jfree.svg.*;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ public class Drawing {
     private final double surfaceHeight;
 
     private final static Color WHITE = new Color(255, 255, 255);
-    private final static float SIZE_CUTOFF = 0.25f;
+    private final static float SIZE_CUTOFF = 0.1f;
 
     public Drawing() {
         surface = new SVGGraphics2D(297, 210, SVGUnits.MM);
@@ -27,16 +28,19 @@ public class Drawing {
         float shape(float value);
     }
 
-    public void drawGrid(Grid grid, Image image, Color color, double circleSize) {
-        // drawGrid(grid, image, color, circleSize, input -> input);
-        drawGrid(grid, image, color, circleSize, input -> {
-            var calculated = (float) Math.min(1.0, Math.max(0.0, Math.pow(input, 3)));
-            if (calculated < 0.3) return 0;
+    public void drawGrid(Grid grid, Image image, Palette palette, Color color, double circleSize) {
+        drawGrid(grid, image, palette, color, circleSize, input -> {
+            var calculated = (float) Math.min(1.0, Math.max(0.0, Math.pow(input, 2.3)));
+            if (calculated < 0.1) return 0;
             return calculated;
         });
     }
 
-    public void drawGrid(Grid grid, Image image, Color color, double circleSize, Waveshaper waveshaper) {
+    public void drawGrid(Grid grid, Image image, Palette palette, Color color, double circleSize, Waveshaper waveshaper) {
+        if (color.equals(WHITE)) return;
+
+        surface.setRenderingHint(SVGHints.KEY_BEGIN_GROUP, color.toString());
+
         var scaleX = 297.0f/image.getWidth();
         var scaleY = 210.0f/image.getHeight();
         var halfSize = circleSize/2;
@@ -46,21 +50,27 @@ public class Drawing {
 
         for (var point : points) {
             var imageColor = image.getColor((int) point.x(), (int) point.y());
-            if (imageColor.equals(WHITE)) continue;
-            var distance = imageColor.distanceTo(color);
 
-            float size = 1.0f - distance;
-            size = waveshaper.shape(size);
-            if (size <= SIZE_CUTOFF) continue;
+            var set = palette.firstFor(3, imageColor);
+            if (set.get(0).color().equals(WHITE)) continue;
+            set.forEach(colorMix -> {
+                if (colorMix.color().equals(color)) {
+                    float size = 1.0f - colorMix.weight();
+                    size = waveshaper.shape(size);
 
-            var circle = new Ellipse2D.Double(
-                    (point.x() - (halfSize*size))*scaleX,
-                    (point.y() - (halfSize*size))*scaleY,
-                    size*circleSize*scaleX,
-                    size*circleSize*scaleY
-            );
-            surface.draw(circle);
+                    if (size <= SIZE_CUTOFF) return;
+
+                    var circle = new Ellipse2D.Double(
+                            (point.x() - (halfSize*size))*scaleX,
+                            (point.y() - (halfSize*size))*scaleY,
+                            size*circleSize*scaleX,
+                            size*circleSize*scaleY
+                    );
+                    surface.draw(circle);
+                }
+            });
         }
+        surface.setRenderingHint(SVGHints.KEY_END_GROUP, color.toString());
     }
 
 

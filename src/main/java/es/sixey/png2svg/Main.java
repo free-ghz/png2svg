@@ -17,18 +17,23 @@ public class Main {
         BufferedImage inputImage = ImageIO.read(input);
 
         Image image = new Image(inputImage);
+        Palette palette = new Palette(Set.of(
+                new Color(255, 255, 255),
+                new Color(0 ,0 ,0),
+                new Color(251, 147, 7),
+                new Color(186, 110, 222),
+                new Color(53, 168, 154)
+        ));
 
         Drawing drawing = new Drawing();
-        Grid grid = new Grid(20, 0, image.getWidth(), image.getHeight());
-        drawing.drawGrid(grid, image, new Color(62, 53, 109), 30);
+        int i = 0;
+        for (var color : palette.getColors()) {
+            Grid grid = new Grid(20, i, image.getWidth(), image.getHeight());
+            drawing.drawGrid(grid, image, palette, color, 20);
+            i += 7;
+        }
 
-        grid = new Grid(20, 0, image.getWidth(), image.getHeight());
-        drawing.drawGrid(grid, image, new Color(201, 220, 170), 30);
-
-        grid = new Grid(20, 0, image.getWidth(), image.getHeight());
-        drawing.drawGrid(grid, image, new Color(188, 157, 110), 30);
-
-        var outputPath = Path.of("output.svg");
+        var outputPath = Path.of("output-5.svg");
         Files.writeString(outputPath, drawing.getSvg());
 
     }
