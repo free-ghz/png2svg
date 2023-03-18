@@ -4,12 +4,9 @@ import es.sixey.png2svg.color.Color;
 import es.sixey.png2svg.color.Palette;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Set;
 
 public class Main {
