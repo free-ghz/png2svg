@@ -1,6 +1,7 @@
 package es.sixey.png2svg;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class SvgSorter {
@@ -8,19 +9,21 @@ public class SvgSorter {
     public static String sort(String svg) {
         StringBuilder collector = new StringBuilder();
         var tags = svg.split("<");
-        ArrayList<Ellipse> current = new ArrayList<>();
+        ArrayList<Item> current = new ArrayList<>();
         int ellipses = 0;
         for (var tag : tags) {
             if (tag.startsWith("g")) {
+                System.out.println("GROUP " + tag);
                 current = new ArrayList<>();
                 collector.append("<").append(tag);
             } else if (tag.startsWith("ellipse")) {
-                current.add(new Ellipse(tag));
+                current.add(new Item(tag));
                 ellipses += 1;
             } else if (tag.startsWith("/g")) {
-                var minItem = findSmallest(current);
-                current.sort((a, b) -> (int) ((a.distanceTo(minItem) - b.distanceTo(minItem)) * 100));
-                for (var a : current) {
+                printDistance(current);
+                var sorted = sort(current);
+                printDistance(sorted);
+                for (var a : sorted) {
                     collector.append("<").append(a.tag);
                 }
                 collector.append("<").append(tag);
@@ -33,41 +36,62 @@ public class SvgSorter {
         return collector.toString();
     }
 
-    private static Ellipse findSmallest(List<Ellipse> list) {
-        var minSize = Double.MAX_VALUE;
-        Ellipse minItem = null;
-        for (var item : list) {
-            var distance = Math.sqrt(Math.pow(item.x, 2) + Math.pow(item.y, 2));
-            if (distance < minSize) {
-                minSize = distance;
-                minItem = item;
-            }
+    private static void printDistance(List<Item> list) {
+        var totalDistance = 0.0;
+        for (var i = 0; i < list.size() - 1; i++) {
+            totalDistance += list.get(i).distanceTo(list.get(i+1));
         }
-        return minItem;
+        System.out.println("Total passive travel distance: " + totalDistance);
     }
 
-    private static class Ellipse {
+    private static List<Item> sort(List<Item> input) {
+        var pool = new ArrayList<>(input);
+        var sorted = new ArrayList<Item>();
+
+        var current = pool.get(pool.size() - 1);
+        do {
+            pool.remove(current);
+            sorted.add(current);
+            double minDistance = Double.MAX_VALUE;
+            Item minimum = null;
+            for (var other : pool) {
+                if (current.distanceTo(other) < minDistance) {
+                    minDistance = current.distanceTo(other);
+                    minimum = other;
+                }
+            }
+            current = minimum;
+        } while (current != null);
+        return sorted;
+    }
+
+    private static class Item {
         private final String tag;
-        private double x;
-        private double y;
-        public Ellipse(String tag) {
+        private double entryX;
+        private double entryY;
+        private double exitX;
+        private double exitY;
+        public Item(String tag) {
             this.tag = tag;
             var stuff = tag.split(" ");
             for (var thing : stuff) {
                 if (thing.startsWith("cx")) {
                     var cx = thing.substring(4, thing.length()-1);
-                    x = Double.parseDouble(cx);
+                    entryX = Double.parseDouble(cx);
                 }
                 if (thing.startsWith("cy")) {
                     var cy = thing.substring(4, thing.length()-1);
-                    y = Double.parseDouble(cy);
+                    entryY = Double.parseDouble(cy);
                 }
             }
+            exitX = entryX;
+            exitY = entryY;
         }
-        public double distanceTo(Ellipse o) {
-            var distanceX = this.x - o.x;
-            var distanceY = this.y - o.y;
-            //return Math.sqrt(Math.pow(distanceX, 2) - Math.pow(distanceY, 2));
+
+        public double distanceTo(Item o) {
+            var distanceX = Math.abs(this.exitX - o.entryX);
+            var distanceY = Math.abs(this.exitY - o.entryY);
+            // return Math.sqrt(Math.pow(distanceX, 2) - Math.pow(distanceY, 2));
             return distanceX + distanceY;
         }
     }
