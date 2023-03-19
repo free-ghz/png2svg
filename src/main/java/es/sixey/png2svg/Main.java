@@ -2,6 +2,7 @@ package es.sixey.png2svg;
 
 import es.sixey.png2svg.color.Color;
 import es.sixey.png2svg.color.Palette;
+import es.sixey.png2svg.color.Palettes;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,13 +18,7 @@ public class Main {
         BufferedImage inputImage = ImageIO.read(input);
 
         Image image = new Image(inputImage);
-        Palette palette = new Palette(Set.of(
-                new Color(255, 255, 255),
-                new Color(0 ,0 ,0),
-                new Color(251, 147, 7),
-                new Color(186, 110, 222),
-                new Color(53, 168, 154)
-        ));
+        Palette palette = Palettes.Stabilo.PASTELS.withWhite().with(Palettes.Stabilo.RANDOM);
 
         Drawing drawing = new Drawing();
         int i = 10;
@@ -33,7 +28,7 @@ public class Main {
             i += 7;
         }
 
-        var outputPath = Path.of("output-5.svg");
+        var outputPath = Path.of("output-close-color-bl2b.svg");
         Files.writeString(outputPath, drawing.getSvg());
 
     }

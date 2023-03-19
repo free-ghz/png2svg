@@ -30,8 +30,7 @@ public class Drawing {
 
     public void drawGrid(Grid grid, Image image, Palette palette, Color color, double circleSize) {
         drawGrid(grid, image, palette, color, circleSize, input -> {
-            var calculated = (float) Math.min(1.0, Math.max(0.0, Math.pow(input, 3)));
-            // if (calculated < 0.1) return 0;
+            var calculated = (float) Math.min(1.0, Math.max(0.0, Math.pow(input, 2)));
             return calculated;
         });
     }

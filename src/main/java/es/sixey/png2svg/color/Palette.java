@@ -1,9 +1,6 @@
 package es.sixey.png2svg.color;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Palette {
     Set<Color> colors;
@@ -51,5 +48,33 @@ public class Palette {
 
     public Set<Color> getColors() {
         return colors;
+    }
+
+    private Palette getCopy() {
+        var palette = new Palette(new HashSet<>());
+        for (var color : getColors()) {
+            palette.getColors().add(color);
+        }
+        return palette;
+    }
+
+    public Palette withWhite() {
+        var palette = getCopy();
+        palette.getColors().add(new Color(255, 255, 255, "white"));
+        return palette;
+    }
+
+    public Palette withBlack() {
+        var palette = getCopy();
+        palette.getColors().add(new Color(0, 0, 0, "black"));
+        return palette;
+    }
+
+    public Palette with(Palette other) {
+        var palette = getCopy();
+        for (var color : other.getColors()) {
+            palette.getColors().add(color);
+        }
+        return palette;
     }
 }

@@ -9,8 +9,15 @@ public class Color {
     private final float s;
     private final float v;
 
+    private String name = null;
+
     public Color(int color) {
         this((color & 0x00ff0000) >> 16, (color & 0x0000ff00) >> 8, color & 0x000000ff);
+    }
+
+    public Color(int r, int g, int b, String name) {
+        this(r, g, b);
+        this.name = name;
     }
 
     public Color(int r, int g, int b) {
@@ -48,5 +55,16 @@ public class Color {
             return other.r == r && other.b == b && other.g == g;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return toInt();
+    }
+
+    @Override public String toString() {
+        String base = "(" + r + ", " + g + ", " + b + ")";
+        if (name != null) base = name + " " + base;
+        return base;
     }
 }

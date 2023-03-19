@@ -12,8 +12,9 @@ public class Grid {
     public Grid(int distance, int tilt, int width, int height) {
         var normalWidth = width/distance;
         var normalHeight = height/distance;
-        for (int y = -normalHeight; y < (normalHeight * 2); y++) {
-            for (int x = -normalWidth; x < (normalWidth * 2); x++) {
+        System.out.println("querying " + (normalHeight*7*normalWidth*7) + " points lol.");
+        for (int y = -normalHeight*2; y < (normalHeight * 5); y++) {
+            for (int x = -normalWidth*2; x < (normalWidth * 5); x++) {
                 var realXZ = (x * distance);
                 var realYZ = (y * distance);
                 var realX = (realXZ * Math.cos(tilt)) + (realYZ * Math.sin(tilt));
@@ -24,6 +25,7 @@ public class Grid {
                 points.add(new Point(realX, realY));
             }
         }
+        System.out.println("... kept " + points.size() + " points.");
     }
 
     public Set<Point> getPoints() {
