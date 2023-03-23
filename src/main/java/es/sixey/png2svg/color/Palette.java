@@ -9,7 +9,7 @@ public class Palette {
     }
 
     public Color closest(Color color) {
-        float minDist = Integer.MAX_VALUE;
+        double minDist = Integer.MAX_VALUE;
         Color bestMatch = null;
         for (var test: colors) {
             var distance = color.distanceTo(test);

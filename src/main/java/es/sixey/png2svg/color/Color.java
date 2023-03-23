@@ -1,11 +1,11 @@
 package es.sixey.png2svg.color;
 
 public class Color {
-    private final int r;
+    private final int r; // 255
     private final int g;
     private final int b;
     private final int lumen;
-    private final float h;
+    private final float h; // 1.0
     private final float s;
     private final float v;
 
@@ -41,18 +41,27 @@ public class Color {
         return new java.awt.Color(r, g, b);
     }
 
-    public float distanceTo(Color other) {
-        float hDist = (float)Math.abs(Math.sin(h * Math.PI * 2) - Math.sin(other.h * Math.PI * 2))/2;
+    public double distanceTo(Color other) {
+        var hueDegrees = h * 360;
+        var otherHueDegrees = other.h * 360;
+        var hDist = Math.min(Math.abs(otherHueDegrees - hueDegrees), 360-Math.abs(otherHueDegrees - hueDegrees)) / 180;
         var sDist = Math.abs(s - other.s);
         var vDist = Math.abs(v - other.v);
-        return ((float)Math.abs(lumen - other.lumen))/255.0f;
+        return Math.pow(hDist, 2) + Math.pow(sDist, 2) + Math.pow(vDist, 2) + Math.pow(((float)lumen - other.lumen)/255.0d, 2);
+        // return ((float)Math.abs(lumen - other.lumen))/255.0f;
     }
 
-    public Color add(Color other) {
-        var blendR = (r + other.r) / 2;
-        var blendG = (g + other.g) / 2;
-        var blendB = (b + other.b) / 2;
-        return new Color(r, g, b);
+    public Color add(Color other, double weight) {
+        var blendR = blend(r, other.r, weight);
+        var blendG = blend(g, other.g, weight);
+        var blendB = blend(b, other.b, weight);
+        return new Color(blendR, blendG, blendB);
+    }
+
+    private int blend(int v, int v2, double weight) {
+        var counterWeight = 1 - weight;
+        var fullTransformation = (v * v2) / 255d;
+        return (int) ((fullTransformation * weight) + (v * counterWeight));
     }
 
     @Override
