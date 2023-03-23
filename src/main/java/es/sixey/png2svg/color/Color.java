@@ -45,8 +45,14 @@ public class Color {
         float hDist = (float)Math.abs(Math.sin(h * Math.PI * 2) - Math.sin(other.h * Math.PI * 2))/2;
         var sDist = Math.abs(s - other.s);
         var vDist = Math.abs(v - other.v);
-        // return (hDist + sDist + vDist)/3.0f;
         return ((float)Math.abs(lumen - other.lumen))/255.0f;
+    }
+
+    public Color add(Color other) {
+        var blendR = (r + other.r) / 2;
+        var blendG = (g + other.g) / 2;
+        var blendB = (b + other.b) / 2;
+        return new Color(r, g, b);
     }
 
     @Override

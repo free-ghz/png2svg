@@ -1,7 +1,6 @@
 package es.sixey.png2svg;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class SvgSorter {
@@ -47,6 +46,11 @@ public class SvgSorter {
     private static List<Item> sort(List<Item> input) {
         var pool = new ArrayList<>(input);
         var sorted = new ArrayList<Item>();
+
+        if (pool.size() == 0) {
+            System.out.println("Pool size zero?");
+            return sorted;
+        }
 
         var current = pool.get(pool.size() - 1);
         do {
