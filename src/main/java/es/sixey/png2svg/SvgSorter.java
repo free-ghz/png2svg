@@ -1,9 +1,18 @@
 package es.sixey.png2svg;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SvgSorter {
+
+    public static void main(String[] stroke) throws IOException {
+        var svg = Files.readString(Path.of("toSort.svg"));
+        var outputPath = Path.of("sorted.svg");
+        Files.writeString(outputPath, SvgSorter.sort(svg));
+    }
 
     public static String sort(String svg) {
         StringBuilder collector = new StringBuilder();
@@ -77,8 +86,11 @@ public class SvgSorter {
         private double exitY;
         public Item(String tag) {
             this.tag = tag;
+            tag = tag.replaceAll("\r?\n", "");
             var stuff = tag.split(" ");
             for (var thing : stuff) {
+                if (thing.strip().length() == 0) continue;
+                if (thing.charAt(thing.length()-1) == '"') thing = thing.substring(0, thing.length() - 2);
                 if (thing.startsWith("cx")) {
                     var cx = thing.substring(4, thing.length()-1);
                     entryX = Double.parseDouble(cx);
