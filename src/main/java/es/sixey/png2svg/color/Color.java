@@ -47,7 +47,8 @@ public class Color {
         var hDist = Math.min(Math.abs(otherHueDegrees - hueDegrees), 360-Math.abs(otherHueDegrees - hueDegrees)) / 180;
         var sDist = Math.abs(s - other.s);
         var vDist = Math.abs(v - other.v);
-        return Math.pow(hDist, 2) + Math.pow(sDist, 2) + Math.pow(vDist, 2) + Math.pow(((float)lumen - other.lumen)/255.0d, 2);
+        var lDist = ((float)lumen - other.lumen)/255.0d;
+        return Math.pow(hDist, 2) + Math.pow(sDist, 2) + Math.pow(vDist, 2) + Math.pow(lDist, 2) + Math.pow(lDist, 2);
         // return ((float)Math.abs(lumen - other.lumen))/255.0f;
     }
 

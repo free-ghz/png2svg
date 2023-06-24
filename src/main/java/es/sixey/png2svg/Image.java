@@ -4,6 +4,9 @@ import es.sixey.png2svg.color.Color;
 import es.sixey.png2svg.color.Palette;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Image {
 
@@ -44,6 +47,23 @@ public class Image {
         var clampX = Math.max(Math.min(x, width-1), 0);
         var clampY = Math.max(Math.min(y, height-1), 0);
         return colors[clampX][clampY];
+    }
+
+    public interface PointFinder {
+        boolean qualifyColor(Color c);
+    }
+    public Set<PointWithColor> getPoints(PointFinder pointFinder) {
+        var set = new HashSet<PointWithColor>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                var color = colors[x][y];
+                if (pointFinder.qualifyColor(color)) {
+                    var pwc = new PointWithColor(x, y, color);
+                    set.add(pwc);
+                }
+            }
+        }
+        return set;
     }
 
     public int getWidth() {

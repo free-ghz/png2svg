@@ -14,29 +14,20 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        var time = System.currentTimeMillis();
         //var input = new File("input.png");
-        var input = new File("milkytest.sniff.png");
+        var input = new File("jaja.png");
         BufferedImage inputImage = ImageIO.read(input);
 
         Image image = new Image(inputImage);
-        // Palette palette = Palettes.Stabilo.PASTELS.withWhite();
-        Palette palette = new Palette(Set.of(
-                new Color(164, 212, 182, "88/16"),
-                new Color(223, 156, 157, "88/26"),
-                new Color(87, 193, 186, "88/13")
-        )).withWhite().withBlack();
+        var lines = LineFinder.getLines(image, 40);
 
+        var palette = Palettes.Stabilo.PASTELS;
         Drawing drawing = new Drawing(palette);
-        int i = 10;
-        int xoffset = 0;
-        for (var color : palette.getColors()) {
-            Grid grid = new Grid(60, i, image.getWidth(), image.getHeight(), xoffset);
-            drawing.drawGrid(grid, image, color, 60);
-            // i += 2;
-            xoffset += 20;
-        }
+        drawing.drawPaths(lines, image);
 
-        var outputPath = Path.of("output-swarm4.svg");
-        Files.writeString(outputPath, SvgSorter.sort(drawing.getSvg()));
+        var outputPath = Path.of("output-lines.svg");
+        Files.writeString(outputPath, drawing.getSvg());
     }
 }
+
