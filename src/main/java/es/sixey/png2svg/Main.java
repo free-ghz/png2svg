@@ -10,24 +10,30 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        var time = System.currentTimeMillis();
-        //var input = new File("input.png");
-        var input = new File("jaja.png");
+        var inputFilename = "0237-sleeper.png";
+        var outputName = "0237-sleeper";
+
+
+        var input = new File(inputFilename);
         BufferedImage inputImage = ImageIO.read(input);
+        var palette = Palettes.Stabilo.PASTELS;
 
         Image image = new Image(inputImage);
-        var lines = LineFinder.getLines(image, 40);
+        for (var cutoff : List.of(5, 10, 20, 40)) {
+            var lines = LineFinder.getLines(image, cutoff);
 
-        var palette = Palettes.Stabilo.PASTELS;
-        Drawing drawing = new Drawing(palette);
-        drawing.drawPaths(lines, image);
+            Drawing drawing = new Drawing(palette);
+            drawing.drawPaths(lines, image);
 
-        var outputPath = Path.of("output-lines.svg");
-        Files.writeString(outputPath, drawing.getSvg());
+            var outputFilename = "output-" + outputName + "-" + cutoff + ".svg";
+            var outputPath = Path.of(outputFilename);
+            Files.writeString(outputPath, SvgSorter.sort(drawing.getSvg()));
+        }
     }
 }
 

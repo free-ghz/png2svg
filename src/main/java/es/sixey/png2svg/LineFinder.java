@@ -44,7 +44,7 @@ public class LineFinder {
         for(var group: groups) {
             var path = new Path();
             sort(group).forEach(point -> path.addPoint(point.x(), point.y()));
-            paths.add(path);
+            paths.add(path.smooth());
             totalSize += path.size();
         }
         System.out.println(totalSize + " points in paths");

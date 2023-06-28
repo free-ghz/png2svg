@@ -21,7 +21,7 @@ public class Drawing {
 
     public Drawing(Palette palette) {
         tine = new Tine(palette, 0.1, 100, 100);
-        surface = new SVGGraphics2D(297, 210, SVGUnits.MM);
+        surface = new SVGGraphics2D(210, 297, SVGUnits.MM);
         this.surfaceWidth = surface.getWidth();
         this.surfaceHeight = surface.getHeight();
         System.out.println(surfaceWidth + " " + surfaceHeight);
@@ -45,8 +45,8 @@ public class Drawing {
 
         surface.setRenderingHint(SVGHints.KEY_BEGIN_GROUP, drawColor.toString());
 
-        var scaleX = 297.0f/image.getWidth();
-        var scaleY = 210.0f/image.getHeight();
+        var scaleX = 210.0f/image.getWidth();
+        var scaleY = 297.0f/image.getHeight();
         var halfSize = circleSize/2;
 
         surface.setPaint(drawColor.toJavaColor());
@@ -83,6 +83,7 @@ public class Drawing {
 
         var xFactor = surfaceWidth / image.getWidth();
         var yFactor = surfaceHeight / image.getHeight();
+        System.out.println("yfac " + surfaceHeight + "/" + image.getHeight() + " = " + yFactor);
 
         for (var path: paths) {
             drawPath(path, 0, 0, xFactor, yFactor);
@@ -96,22 +97,20 @@ public class Drawing {
         System.out.println("Drawing " + points.size() + " points.");
         if (points.isEmpty()) return;
         if (points.size() == 1) {
-            System.err.println("point...");
-            return;
-        }
-
-        for (var point: points) {
+            var point = points.get(0);
             var circle = new Ellipse2D.Double(
                     point.x() * xFactor,
                     point.y() * yFactor,
                     xFactor,
                     yFactor
             );
-            // surface.draw(circle);
+            surface.draw(circle);
+            return;
         }
 
         Path2D path2D = new Path2D.Double();
         path2D.moveTo (points.get(0).x() * xFactor, points.get(0).y() * yFactor);
+        System.out.println(points.get(0).y() * yFactor);
 
         for (int i = 1; i < points.size(); i++) {
             var point = points.get(i);
@@ -121,7 +120,7 @@ public class Drawing {
     }
 
     public String getSvg() {
-        var viewbox = new ViewBox(0, 0, 297, 210);
+        var viewbox = new ViewBox(0, 0, 210, 297);
         return surface.getSVGElement(
                 null,
                 true, // include dimensions,
