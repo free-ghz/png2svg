@@ -21,7 +21,7 @@ public class Drawing {
 
     public Drawing(Palette palette) {
         tine = new Tine(palette, 0.1, 100, 100);
-        surface = new SVGGraphics2D(210, 297, SVGUnits.MM);
+        surface = new SVGGraphics2D(100, 100, SVGUnits.MM);
         this.surfaceWidth = surface.getWidth();
         this.surfaceHeight = surface.getHeight();
         System.out.println(surfaceWidth + " " + surfaceHeight);
